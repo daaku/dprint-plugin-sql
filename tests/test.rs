@@ -7,7 +7,7 @@ use std::sync::Arc;
 use dprint_core::configuration::*;
 use dprint_development::*;
 use dprint_plugin_sql::configuration::{resolve_config, ConfigurationBuilder};
-use dprint_plugin_sql::*;
+use dprint_plugin_sql::format_text;
 
 #[test]
 fn test_specs() {
@@ -24,12 +24,12 @@ fn test_specs() {
     },
     {
       let global_config = global_config.clone();
-      Arc::new(move |file_path, file_text, spec_config| {
+      Arc::new(move |_file_path, file_text, spec_config| {
         let spec_config: ConfigKeyMap = serde_json::from_value(spec_config.clone().into()).unwrap();
         let config_result = resolve_config(spec_config, &global_config);
         ensure_no_diagnostics(&config_result.diagnostics);
 
-        format_text(file_path, &file_text, &config_result.config)
+        format_text(&file_text, &config_result.config)
       })
     },
     Arc::new(move |_file_path, _file_text, _spec_config| panic!("Plugin does not support dprint-core tracing.")),
@@ -39,7 +39,6 @@ fn test_specs() {
 #[test]
 fn should_handle_windows_newlines() {
   let config = ConfigurationBuilder::new().build();
-  let file_text = format_text(&PathBuf::from("file.sql"), "SELECT * FROM  dbo.Test\r\n", &config).unwrap();
-
+  let file_text = format_text("SELECT * FROM  dbo.Test\r\n", &config).unwrap();
   assert_eq!(file_text.unwrap(), "select\n  *\nfrom\n  dbo.Test\n");
 }

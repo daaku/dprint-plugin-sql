@@ -1,5 +1,6 @@
 use super::Configuration;
 use dprint_core::configuration::*;
+use dprint_core::plugins::PluginResolveConfigurationResult;
 
 /// Resolves configuration from a collection of key value strings.
 ///
@@ -26,7 +27,7 @@ use dprint_core::configuration::*;
 pub fn resolve_config(
   config: ConfigKeyMap,
   global_config: &GlobalConfiguration,
-) -> ResolveConfigurationResult<Configuration> {
+) -> PluginResolveConfigurationResult<Configuration> {
   let mut diagnostics = Vec::new();
   let mut config = config;
 
@@ -61,8 +62,12 @@ pub fn resolve_config(
 
   diagnostics.extend(get_unknown_property_diagnostics(config));
 
-  ResolveConfigurationResult {
+  PluginResolveConfigurationResult {
     config: resolved_config,
     diagnostics,
+    file_matching: dprint_core::plugins::FileMatchingInfo {
+      file_extensions: vec!["sql".to_string()],
+      file_names: vec![],
+    },
   }
 }

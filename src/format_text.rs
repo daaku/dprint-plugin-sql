@@ -5,9 +5,8 @@ use dprint_core::configuration::resolve_new_line_kind;
 use sqlformat::FormatOptions;
 use sqlformat::Indent;
 use sqlformat::QueryParams;
-use std::path::Path;
 
-pub fn format_text(_file_path: &Path, text: &str, config: &Configuration) -> Result<Option<String>> {
+pub fn format_text(text: &str, config: &Configuration) -> Result<Option<String>> {
   let input_text = text;
   let text = sqlformat::format(
     text,
