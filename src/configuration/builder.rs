@@ -1,6 +1,4 @@
-use dprint_core::configuration::{
-  resolve_global_config, ConfigKeyMap, ConfigKeyValue, GlobalConfiguration, NewLineKind,
-};
+use dprint_core::configuration::{ConfigKeyMap, ConfigKeyValue, GlobalConfiguration, NewLineKind};
 
 use super::*;
 
@@ -15,6 +13,7 @@ use super::*;
 ///     .uppercase(true)
 ///     .build();
 /// ```
+#[derive(Default)]
 pub struct ConfigurationBuilder {
   pub(super) config: ConfigKeyMap,
   global_config: Option<GlobalConfiguration>,
@@ -23,10 +22,7 @@ pub struct ConfigurationBuilder {
 impl ConfigurationBuilder {
   /// Constructs a new configuration builder.
   pub fn new() -> ConfigurationBuilder {
-    ConfigurationBuilder {
-      config: Default::default(),
-      global_config: None,
-    }
+    Self::default()
   }
 
   /// Gets the final configuration that can be used to format a file.
@@ -34,8 +30,7 @@ impl ConfigurationBuilder {
     if let Some(global_config) = &self.global_config {
       resolve_config(self.config.clone(), global_config).config
     } else {
-      let global_config = resolve_global_config(Default::default(), &Default::default()).config;
-      resolve_config(self.config.clone(), &global_config).config
+      resolve_config(self.config.clone(), &Default::default()).config
     }
   }
 
@@ -106,11 +101,7 @@ mod tests {
 
     let inner_config = config.get_inner_config();
     assert_eq!(inner_config.len(), 5);
-    let diagnostics = resolve_config(
-      inner_config,
-      &resolve_global_config(Default::default(), &Default::default()).config,
-    )
-    .diagnostics;
+    let diagnostics = resolve_config(inner_config, &resolve_global_config(&mut Default::default()).config).diagnostics;
     assert_eq!(diagnostics.len(), 0);
   }
 
@@ -119,7 +110,7 @@ mod tests {
     let mut global_config = ConfigKeyMap::new();
     global_config.insert(String::from("newLineKind"), "crlf".into());
     global_config.insert(String::from("useTabs"), true.into());
-    let global_config = resolve_global_config(global_config, &Default::default()).config;
+    let global_config = resolve_global_config(&mut global_config).config;
     let mut config_builder = ConfigurationBuilder::new();
     let config = config_builder.global_config(global_config).build();
     assert_eq!(config.new_line_kind == NewLineKind::CarriageReturnLineFeed, true);
@@ -128,7 +119,7 @@ mod tests {
 
   #[test]
   fn use_defaults_when_global_not_set() {
-    let global_config = resolve_global_config(Default::default(), &Default::default()).config;
+    let global_config = resolve_global_config(&mut Default::default()).config;
     let mut config_builder = ConfigurationBuilder::new();
     let config = config_builder.global_config(global_config).build();
     assert_eq!(config.indent_width, 2);

@@ -8,15 +8,15 @@ update dbo.Test Set test=1
 GO
 
 [expect]
-SELECT
+select
   *
-FROM
+from
   dbo.Test
-WHERE
+where
   test = 'asdf'
-GO
+go
 update
   dbo.Test
-Set
+set
   test = 1
-GO
+go
