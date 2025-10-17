@@ -1,16 +1,12 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://plugins.dprint.dev/dprint/dprint-plugin-sql/0.2.0/schema.json",
+  "$id": "https://plugins.dprint.dev/daaku/dprint-plugin-sql/v42/schema.json",
   "type": "object",
   "definitions": {
     "useTabs": {
       "description": "Whether to use tabs (true) or spaces (false).",
       "type": "boolean",
-      "default": false,
-      "oneOf": [
-        { "const": true, "description": "" },
-        { "const": false, "description": "" }
-      ]
+      "default": false
     },
     "newLineKind": {
       "description": "The kind of newline to use.",

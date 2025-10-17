@@ -24,6 +24,7 @@ jobs:
       - run: cargo test
       - run: cargo build --target wasm32-unknown-unknown --release
       - run: mv target/wasm32-unknown-unknown/release/dprint_plugin_sql.wasm target/wasm32-unknown-unknown/release/plugin.wasm
+      - run: sed -i 's/v42/v${{ github.run_number }}/' schema.json
       - uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
