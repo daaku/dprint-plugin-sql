@@ -24,8 +24,8 @@ panic = "abort"
 anyhow = "1.0"
 dprint-core = { version = "0.67", features = ["formatting", "wasm"] }
 serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0" }
 sqlformat = "0.5"
 
 [dev-dependencies]
 dprint-development = "0.10"
-serde_json = { version = "1.0" }
