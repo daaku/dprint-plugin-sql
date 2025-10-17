@@ -19,6 +19,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
       - run: rustup toolchain install stable
       - run: rustup target add wasm32-unknown-unknown
+      - run: sed -i 's/version = "42"/version = "${{ github.run_number }}"/' Cargo.toml
       - run: cargo build
       - run: cargo clippy
       - run: cargo test
