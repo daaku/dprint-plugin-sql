@@ -224,12 +224,10 @@ impl SyncPluginHandler<Configuration> for SqlPluginHandler {
             config_key: "sql".to_string(),
             help_url: "https://github.com/daaku/dprint-plugin-sql".to_string(),
             config_schema_url: format!(
-                "https://plugins.dprint.dev/daaku/dprint-plugin-sql/{}/schema.json",
+                "https://plugins.dprint.dev/daaku/sql/{}/schema.json",
                 version
             ),
-            update_url: Some(
-                "https://plugins.dprint.dev/daaku/dprint-plugin-sql/latest.json".to_string(),
-            ),
+            update_url: Some("https://plugins.dprint.dev/daaku/sql/latest.json".to_string()),
         }
     }
 
