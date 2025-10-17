@@ -27,7 +27,7 @@ jobs:
       - uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
-          tag_name: r${{ github.run_number }}
+          tag_name: v${{ github.run_number }}
           files: |
             target/wasm32-unknown-unknown/release/plugin.wasm
             schema.json
@@ -47,7 +47,7 @@ jobs:
                    // sql config goes here
                  },
                  "plugins": [
-                   "https://plugins.dprint.dev/daaku/sql-r${{ github.run_number }}.wasm"
+                   "https://plugins.dprint.dev/daaku/sql-v${{ github.run_number }}.wasm"
                  ]
                }
                ```
