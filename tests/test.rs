@@ -1,6 +1,3 @@
-extern crate daaku_dprint_plugin_sql;
-extern crate dprint_development;
-
 use daaku_dprint_plugin_sql::Configuration;
 use daaku_dprint_plugin_sql::SqlPluginHandler;
 use daaku_dprint_plugin_sql::format_text;
