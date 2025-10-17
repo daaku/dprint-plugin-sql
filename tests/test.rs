@@ -2,6 +2,7 @@ use daaku_dprint_plugin_sql::Configuration;
 use daaku_dprint_plugin_sql::SqlPluginHandler;
 use daaku_dprint_plugin_sql::format_text;
 use dprint_core::configuration::ConfigKeyMap;
+use dprint_core::configuration::NewLineKind;
 use dprint_core::configuration::resolve_global_config;
 use dprint_core::plugins::SyncPluginHandler;
 use dprint_development::ParseSpecOptions;
@@ -10,6 +11,27 @@ use dprint_development::ensure_no_diagnostics;
 use dprint_development::run_specs;
 use std::path::PathBuf;
 use std::sync::Arc;
+
+#[test]
+fn handle_global_config() {
+    let mut global_config = ConfigKeyMap::new();
+    global_config.insert(String::from("newLineKind"), "crlf".into());
+    global_config.insert(String::from("useTabs"), true.into());
+    let global_config = resolve_global_config(&mut global_config).config;
+    let mut sph = SqlPluginHandler::new();
+    let config = sph
+        .resolve_config(Default::default(), &global_config)
+        .config;
+    assert_eq!(config.new_line_kind, NewLineKind::CarriageReturnLineFeed);
+    assert_eq!(config.use_tabs, true);
+}
+
+#[test]
+fn use_defaults_when_global_not_set() {
+    let config = Configuration::default();
+    assert_eq!(config.indent_width, 2);
+    assert_eq!(config.new_line_kind, NewLineKind::LineFeed);
+}
 
 #[test]
 fn test_specs() {

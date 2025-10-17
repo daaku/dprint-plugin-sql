@@ -61,33 +61,6 @@ impl Default for Configuration {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use dprint_core::configuration::{NewLineKind, resolve_global_config};
-
-    #[test]
-    fn handle_global_config() {
-        let mut global_config = ConfigKeyMap::new();
-        global_config.insert(String::from("newLineKind"), "crlf".into());
-        global_config.insert(String::from("useTabs"), true.into());
-        let global_config = resolve_global_config(&mut global_config).config;
-        let mut sph = SqlPluginHandler::new();
-        let config = sph
-            .resolve_config(Default::default(), &global_config)
-            .config;
-        assert_eq!(config.new_line_kind, NewLineKind::CarriageReturnLineFeed);
-        assert_eq!(config.use_tabs, true);
-    }
-
-    #[test]
-    fn use_defaults_when_global_not_set() {
-        let config = Configuration::default();
-        assert_eq!(config.indent_width, 2);
-        assert_eq!(config.new_line_kind, NewLineKind::LineFeed);
-    }
-}
-
 pub fn format_text(text: &str, config: &Configuration) -> Result<Option<String>> {
     let input_text = text;
     let text = sqlformat::format(text, &QueryParams::None, &config.into());
