@@ -107,7 +107,7 @@ pub fn format_text(text: &str, config: &Configuration) -> Result<Option<String>>
 pub struct SqlPluginHandler {}
 
 impl SqlPluginHandler {
-    #[allow(dead_code)]
+    #[allow(dead_code, clippy::new_without_default)]
     pub const fn new() -> Self {
         Self {}
     }
