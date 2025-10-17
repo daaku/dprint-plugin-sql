@@ -205,7 +205,7 @@ impl SyncPluginHandler<Configuration> for SqlPluginHandler {
     }
 
     fn license_text(&mut self) -> String {
-        std::str::from_utf8(include_bytes!("../LICENSE"))
+        std::str::from_utf8(include_bytes!("../license"))
             .unwrap()
             .into()
     }
