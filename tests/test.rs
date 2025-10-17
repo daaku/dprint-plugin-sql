@@ -1,6 +1,9 @@
+extern crate daaku_dprint_plugin_sql;
 extern crate dprint_development;
-extern crate dprint_plugin_sql;
 
+use daaku_dprint_plugin_sql::Configuration;
+use daaku_dprint_plugin_sql::SqlPluginHandler;
+use daaku_dprint_plugin_sql::format_text;
 use dprint_core::configuration::ConfigKeyMap;
 use dprint_core::configuration::resolve_global_config;
 use dprint_core::plugins::SyncPluginHandler;
@@ -8,9 +11,6 @@ use dprint_development::ParseSpecOptions;
 use dprint_development::RunSpecsOptions;
 use dprint_development::ensure_no_diagnostics;
 use dprint_development::run_specs;
-use dprint_plugin_sql::Configuration;
-use dprint_plugin_sql::SqlPluginHandler;
-use dprint_plugin_sql::format_text;
 use std::path::PathBuf;
 use std::sync::Arc;
 

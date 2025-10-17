@@ -1,7 +1,10 @@
 [package]
-name = "dprint-plugin-sql"
+name = "daaku-dprint-plugin-sql"
 version = "0.2.0"
-authors = ["David Sherret <dsherret@gmail.com>"]
+authors = [
+  "Naitik Shah <n@daaku.org>",
+  "David Sherret <dsherret@gmail.com>",
+]
 edition = "2024"
 homepage = "https://github.com/dprint/dprint-plugin-sql"
 keywords = ["formatting", "formatter", "sql"]
