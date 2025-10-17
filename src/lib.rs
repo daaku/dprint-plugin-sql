@@ -181,13 +181,13 @@ impl SyncPluginHandler<Configuration> for SqlPluginHandler {
             name: env!("CARGO_PKG_NAME").to_string(),
             version: version.clone(),
             config_key: "sql".to_string(),
-            help_url: "https://dprint.dev/plugins/sql".to_string(),
+            help_url: "https://github.com/daaku/dprint-plugin-sql".to_string(),
             config_schema_url: format!(
-                "https://plugins.dprint.dev/dprint/dprint-plugin-sql/{}/schema.json",
+                "https://plugins.dprint.dev/daaku/dprint-plugin-sql/{}/schema.json",
                 version
             ),
             update_url: Some(
-                "https://plugins.dprint.dev/dprint/dprint-plugin-sql/latest.json".to_string(),
+                "https://plugins.dprint.dev/daaku/dprint-plugin-sql/latest.json".to_string(),
             ),
         }
     }
