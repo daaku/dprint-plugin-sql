@@ -2,9 +2,9 @@ use anyhow::Result;
 use dprint_core::configuration::NewLineKind;
 use dprint_core::configuration::RECOMMENDED_GLOBAL_CONFIGURATION;
 use dprint_core::configuration::get_unknown_property_diagnostics;
-use dprint_core::configuration::get_value;
 use dprint_core::configuration::resolve_new_line_kind;
 use dprint_core::configuration::{ConfigKeyMap, GlobalConfiguration};
+use dprint_core::configuration::{get_nullable_value, get_value};
 use dprint_core::plugins::CheckConfigUpdatesMessage;
 use dprint_core::plugins::ConfigChange;
 use dprint_core::plugins::FormatResult;
@@ -26,6 +26,31 @@ pub struct Configuration {
     pub new_line_kind: NewLineKind,
     pub uppercase: bool,
     pub lines_between_queries: u8,
+    pub inline: bool,
+    pub max_inline_block: usize,
+    pub max_inline_arguments: Option<usize>,
+    pub max_inline_top_level: Option<usize>,
+    pub joins_as_top_level: bool,
+}
+
+impl From<&Configuration> for FormatOptions<'_> {
+    fn from(config: &Configuration) -> Self {
+        FormatOptions {
+            indent: if config.use_tabs {
+                Indent::Tabs
+            } else {
+                Indent::Spaces(config.indent_width)
+            },
+            uppercase: Some(config.uppercase),
+            lines_between_queries: config.lines_between_queries,
+            inline: config.inline,
+            max_inline_block: config.max_inline_block,
+            max_inline_arguments: config.max_inline_arguments,
+            max_inline_top_level: config.max_inline_top_level,
+            joins_as_top_level: config.joins_as_top_level,
+            ..Default::default()
+        }
+    }
 }
 
 impl Default for Configuration {
@@ -65,20 +90,7 @@ mod tests {
 
 pub fn format_text(text: &str, config: &Configuration) -> Result<Option<String>> {
     let input_text = text;
-    let text = sqlformat::format(
-        text,
-        &QueryParams::None,
-        &FormatOptions {
-            indent: if config.use_tabs {
-                Indent::Tabs
-            } else {
-                Indent::Spaces(config.indent_width)
-            },
-            uppercase: Some(config.uppercase),
-            lines_between_queries: config.lines_between_queries,
-            ..Default::default()
-        },
-    );
+    let text = sqlformat::format(text, &QueryParams::None, &config.into());
 
     // ensure ends with newline
     let text = if !text.ends_with('\n') {
@@ -121,6 +133,7 @@ impl SyncPluginHandler<Configuration> for SqlPluginHandler {
     ) -> PluginResolveConfigurationResult<Configuration> {
         let mut diagnostics = Vec::new();
         let mut config = config;
+        let default_format_options = FormatOptions::default();
 
         let resolved_config = Configuration {
             use_tabs: get_value(
@@ -151,7 +164,35 @@ impl SyncPluginHandler<Configuration> for SqlPluginHandler {
             lines_between_queries: get_value(
                 &mut config,
                 "linesBetweenQueries",
-                1,
+                default_format_options.lines_between_queries,
+                &mut diagnostics,
+            ),
+            inline: get_value(
+                &mut config,
+                "inline",
+                default_format_options.inline,
+                &mut diagnostics,
+            ),
+            max_inline_block: get_value(
+                &mut config,
+                "maxInlineBlock",
+                default_format_options.max_inline_block,
+                &mut diagnostics,
+            ),
+            max_inline_arguments: get_nullable_value(
+                &mut config,
+                "maxInlineArguments",
+                &mut diagnostics,
+            ),
+            max_inline_top_level: get_nullable_value(
+                &mut config,
+                "maxInlineTopLevel",
+                &mut diagnostics,
+            ),
+            joins_as_top_level: get_value(
+                &mut config,
+                "joinsAsTopLevel",
+                default_format_options.joins_as_top_level,
                 &mut diagnostics,
             ),
         };

@@ -43,6 +43,29 @@
       "description": "Number of line breaks between quries.",
       "default": 1,
       "type": "number"
+    },
+    "inline": {
+      "description": "Keep the query in a single line.",
+      "default": false,
+      "type": "boolean"
+    },
+    "maxInlineBlock": {
+      "description": "Maximum length of an inline block.",
+      "default": 50,
+      "type": "number"
+    },
+    "maxInlineArguments": {
+      "description": "Maximum length of inline arguments. If unset keep every argument in a separate line.",
+      "type": "number"
+    },
+    "maxInlineTopLevel": {
+      "description": "Inline the argument at the top level if they would fit a line of this length.",
+      "type": "number"
+    },
+    "joinsAsTopLevel": {
+      "description": "Consider any JOIN statement as a top level keyword instead of a reserved keyword.",
+      "default": false,
+      "type": "boolean"
     }
   }
 }
