@@ -6,6 +6,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    env:
+      VERSION: 1.${{ github.run_number }}.0
     steps:
       - uses: actions/checkout@v5
       - uses: actions/cache@v4
@@ -19,17 +21,17 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
       - run: rustup toolchain install stable
       - run: rustup target add wasm32-unknown-unknown
-      - run: sed -i 's/version = "42"/version = "${{ github.run_number }}"/' Cargo.toml
+      - run: sed -i 's/version = "1.42.0"/version = "${{ env.VERSION }}"/' Cargo.toml
       - run: cargo build
       - run: cargo clippy
       - run: cargo test
       - run: cargo build --target wasm32-unknown-unknown --release
       - run: mv target/wasm32-unknown-unknown/release/dprint_plugin_sql.wasm target/wasm32-unknown-unknown/release/plugin.wasm
-      - run: sed -i 's/v42/v${{ github.run_number }}/' schema.json
+      - run: sed -i 's/v1.42.0/v${{ env.VERSION }}/' schema.json
       - uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
-          tag_name: v${{ github.run_number }}
+          tag_name: v${{ env.VERSION }}
           files: |
             target/wasm32-unknown-unknown/release/plugin.wasm
             schema.json
@@ -49,7 +51,7 @@ jobs:
                    // sql config goes here
                  },
                  "plugins": [
-                   "https://plugins.dprint.dev/daaku/sql-v${{ github.run_number }}.wasm"
+                   "https://plugins.dprint.dev/daaku/sql-v${{ env.VERSION }}.wasm"
                  ]
                }
                ```

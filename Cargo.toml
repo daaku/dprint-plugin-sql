@@ -1,6 +1,6 @@
 [package]
 name = "daaku-dprint-plugin-sql"
-version = "42"
+version = "1.42.0"
 authors = [
   "Naitik Shah <n@daaku.org>",
   "David Sherret <dsherret@gmail.com>",
