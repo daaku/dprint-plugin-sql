@@ -62,6 +62,12 @@
       "description": "Consider any JOIN statement as a top level keyword instead of a reserved keyword.",
       "default": false,
       "type": "boolean"
+    },
+    "ignoreCaseConvert": {
+      "description": "Ignore case conversion for specified strings in array.",
+      "default": [],
+      "type": "array",
+      "items": { "type": "string" }
     }
   }
 }

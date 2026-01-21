@@ -1,10 +1,12 @@
 use anyhow::Result;
+use dprint_core::configuration::ConfigKeyValue;
+use dprint_core::configuration::ConfigurationDiagnostic;
 use dprint_core::configuration::NewLineKind;
 use dprint_core::configuration::RECOMMENDED_GLOBAL_CONFIGURATION;
 use dprint_core::configuration::get_unknown_property_diagnostics;
 use dprint_core::configuration::resolve_new_line_kind;
 use dprint_core::configuration::{ConfigKeyMap, GlobalConfiguration};
-use dprint_core::configuration::{get_nullable_value, get_value};
+use dprint_core::configuration::{get_nullable_value, get_nullable_vec, get_value};
 use dprint_core::plugins::CheckConfigUpdatesMessage;
 use dprint_core::plugins::ConfigChange;
 use dprint_core::plugins::FormatResult;
@@ -31,10 +33,11 @@ pub struct Configuration {
     pub max_inline_arguments: Option<usize>,
     pub max_inline_top_level: Option<usize>,
     pub joins_as_top_level: bool,
+    pub ignore_case_convert: Option<Vec<String>>,
 }
 
-impl From<&Configuration> for FormatOptions<'_> {
-    fn from(config: &Configuration) -> Self {
+impl<'a> From<&'a Configuration> for FormatOptions<'a> {
+    fn from(config: &'a Configuration) -> Self {
         FormatOptions {
             indent: if config.use_tabs {
                 Indent::Tabs
@@ -48,6 +51,10 @@ impl From<&Configuration> for FormatOptions<'_> {
             max_inline_arguments: config.max_inline_arguments,
             max_inline_top_level: config.max_inline_top_level,
             joins_as_top_level: config.joins_as_top_level,
+            ignore_case_convert: config
+                .ignore_case_convert
+                .as_ref()
+                .map(|v| v.iter().map(|s| s.as_str()).collect()),
             ..Default::default()
         }
     }
@@ -166,6 +173,21 @@ impl SyncPluginHandler<Configuration> for SqlPluginHandler {
                 &mut config,
                 "joinsAsTopLevel",
                 default_format_options.joins_as_top_level,
+                &mut diagnostics,
+            ),
+            ignore_case_convert: get_nullable_vec(
+                &mut config,
+                "ignoreCaseConvert",
+                |value, _index, diagnostics| match value {
+                    ConfigKeyValue::String(value) => Some(value),
+                    _ => {
+                        diagnostics.push(ConfigurationDiagnostic {
+                            property_name: "ignoreCaseConvert".into(),
+                            message: "Expected only string values.".to_string(),
+                        });
+                        None
+                    }
+                },
                 &mut diagnostics,
             ),
         };
